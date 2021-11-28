@@ -137,7 +137,23 @@ def plot_epochs(data, fs, N_channels, N_epochs):
     plt.ylabel('Signal')
     plt.xlim([0, data.shape[0]/fs])
     
-    
+    def butter_bandpass(lowcut, highcut, fs, order=5):
+    "https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html"
+    from scipy.signal import butter, lfilter
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    "https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html"
+    from scipy.signal import butter, lfilter
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 
 """ 
     Main Code Here
@@ -159,6 +175,10 @@ emg_file = 'EMG_session1_sub1_multigrasp_realMove.mat';
 emg_data, emg_fs, emg_event_times, emg_grasp_labels, emg_grasp_names = load_emg_eeg_data(os.path.join(path,emg_folder, emg_file));
 
 eeg_data, eeg_fs, eeg_event_times, eeg_grasp_labels, eeg_grasp_names = load_emg_eeg_data(os.path.join(path,eeg_folder, eeg_file));
+
+" Apply Butter Bandpass Filter"
+emg_data = butter_bandpass_filter(emg_data, 8, 30, emg_fs, order=5)
+eeg_data = butter_bandpass_filter(eeg_data, 8, 30, emg_fs, order=5)
 
 " Break into epochs"
 
