@@ -19,8 +19,8 @@ import tensorflow as tf
 from htnet_utils import apply_hilbert_tf, proj_to_roi
 
 def htnet(nb_classes, Chans = 64, Samples = 128, 
-          dropoutRate = 0.5, kernLength = 64, F1 = 4, 
-          D = 2, F2 = 8, norm_rate = 0.25, dropoutType = 'Dropout',
+          dropoutRate = 0.5, kernLength = 64, F1 = 8, 
+          D = 2, F2 = 16, norm_rate = 0.25, dropoutType = 'Dropout',
           ROIs = 100,useHilbert=True,projectROIs=False,kernLength_sep = 16,
           do_log=False,compute_val='power',data_srate = 500,base_split = 4):
     """

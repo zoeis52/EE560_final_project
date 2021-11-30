@@ -160,14 +160,12 @@ def train_HTNet(folds, epochs, grasp_labels, grasp_names, fs):
         X_train = np.moveaxis(X_train, -1, 0)
         X_train = np.moveaxis(X_train, -1, -2)
         X_train = np.expand_dims(X_train, axis = 1)
-        y_train = np_utils.to_categorical(y_train-1)
+        y_cat_train = np_utils.to_categorical(y_train-1)
         # print(X_train.shape)
         X_test = np.moveaxis(X_test, -1, 0)
         X_test = np.moveaxis(X_test, -1, -2)
         X_test = np.expand_dims(X_test, axis = 1)
-        y_test = np_utils.to_categorical(y_test-1)
-
-        print(y_train.shape)
+        y_cat_test = np_utils.to_categorical(y_test-1)
 
         # then get model up and running
         # Load NN model
@@ -183,14 +181,25 @@ def train_HTNet(folds, epochs, grasp_labels, grasp_names, fs):
         htnet_nn.compile(loss="categorical_crossentropy", optimizer=htnet_opt, metrics = ['accuracy'])
 
         htnet_nn.summary()
+        train_preds = htnet_nn.predict(X_train).argmax(axis = -1)
+        train_acc = accuracy_score(y_train, train_preds)
+        print(train_preds)
+        print("training accuracy before training is:", train_acc)
         
         # Perform model fitting in Keras
-        fittedModel = htnet_nn.fit(X_train, y_train, batch_size = 16, epochs = 50, verbose = 2)
+        htnet_nn.fit(X_train, y_cat_train, batch_size = 16, epochs = 50, verbose = 2)
         
         # get the accuracies
-        train_preds = htnet_nn.predict(X_train)
-        test_preds = htnet_nn.predict(X_test)
-
+        train_preds = htnet_nn.predict(X_train).argmax(axis = -1)
+        test_preds = htnet_nn.predict(X_test).argmax(axis = -1)
+        print(train_preds.shape)
+        print(train_preds)
+        print(y_train.shape)
+        print(y_train)
+        print()
+        print(test_preds.shape)
+        print(test_preds)
+        
         train_acc = accuracy_score(y_train, train_preds)
         test_acc = accuracy_score(y_test, test_preds)
         fold_accs.append([train_acc, test_acc])
@@ -198,7 +207,7 @@ def train_HTNet(folds, epochs, grasp_labels, grasp_names, fs):
         print("training f1 score is:", f1_score(y_train, train_preds, average='weighted'))
         print("testing accuracy is:", test_acc)
         print("test classification report:")
-        print(classification_report(y_test, test_preds, target_names=grasp_names))
+        print(classification_report(y_test, test_preds, target_names=grasp_names, labels=range(len(grasp_names))) )
         print()
         
         tf.keras.backend.clear_session() # avoids slowdowns when running fits for many folds
