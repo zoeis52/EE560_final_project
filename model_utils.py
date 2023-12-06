@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.io as sio
 import tensorflow as tf
+import pdb
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier
@@ -180,6 +181,7 @@ def train_HTNet(folds, epochs, grasp_labels, grasp_names, fs):
         # Set up comiler, checkpointer, and early stopping during model fitting
         htnet_nn.compile(loss="categorical_crossentropy", optimizer=htnet_opt, metrics = ['accuracy'])
 
+#         pdb.set_trace()
         htnet_nn.summary()
         train_preds = htnet_nn.predict(X_train).argmax(axis = -1)
         train_acc = accuracy_score(y_train, train_preds)
@@ -189,9 +191,15 @@ def train_HTNet(folds, epochs, grasp_labels, grasp_names, fs):
         # Perform model fitting in Keras
         htnet_nn.fit(X_train, y_cat_train, batch_size = 16, epochs = 50, verbose = 2)
         
+        htnet_nn.evaluate(X_train, y_cat_train)
+        htnet_nn.evaluate(X_test, y_cat_test)
+        
         # get the accuracies
-        train_preds = htnet_nn.predict(X_train).argmax(axis = -1)
-        test_preds = htnet_nn.predict(X_test).argmax(axis = -1)
+        train_preds = (htnet_nn.predict(X_train).argmax(axis = -1)) + 1
+        test_preds = (htnet_nn.predict(X_test).argmax(axis = -1)) + 1
+        from sklearn.metrics import log_loss
+#         pdb.set_trace()
+        print(log_loss(y_train, htnet_nn.predict(X_train), labels=[1,2,3,4] ) )
         print(train_preds.shape)
         print(train_preds)
         print(y_train.shape)

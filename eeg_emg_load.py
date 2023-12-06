@@ -137,7 +137,7 @@ def plot_epochs(data, fs, N_channels, N_epochs):
     plt.ylabel('Signal')
     plt.xlim([0, data.shape[0]/fs])
     
-    def butter_bandpass(lowcut, highcut, fs, order=5):
+def butter_bandpass(lowcut, highcut, fs, order=5):
     "https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html"
     from scipy.signal import butter, lfilter
     nyq = 0.5 * fs
@@ -159,36 +159,36 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     Main Code Here
 
 """
-import os
+# import os
 
-" Set file names"
-# Set path to file
-path = 'G:/.shortcut-targets-by-id/16bjLJ-x3DCMytjvubbbvXEirA9t2l2q-/FinalProjectData';
+# " Set file names"
+# # Set path to file
+# path = 'G:/.shortcut-targets-by-id/16bjLJ-x3DCMytjvubbbvXEirA9t2l2q-/FinalProjectData';
 
-eeg_folder = 'EEG'
-eeg_file = 'EEG_session1_sub1_multigrasp_realMove.mat';
+# eeg_folder = 'EEG'
+# eeg_file = 'EEG_session1_sub1_multigrasp_realMove.mat';
 
-emg_folder = 'EMG_ConvertedData';
-emg_file = 'EMG_session1_sub1_multigrasp_realMove.mat';
+# emg_folder = 'EMG_ConvertedData';
+# emg_file = 'EMG_session1_sub1_multigrasp_realMove.mat';
 
-" Load file"
-emg_data, emg_fs, emg_event_times, emg_grasp_labels, emg_grasp_names = load_emg_eeg_data(os.path.join(path,emg_folder, emg_file));
+# " Load file"
+# emg_data, emg_fs, emg_event_times, emg_grasp_labels, emg_grasp_names = load_emg_eeg_data(os.path.join(path,emg_folder, emg_file));
 
-eeg_data, eeg_fs, eeg_event_times, eeg_grasp_labels, eeg_grasp_names = load_emg_eeg_data(os.path.join(path,eeg_folder, eeg_file));
+# eeg_data, eeg_fs, eeg_event_times, eeg_grasp_labels, eeg_grasp_names = load_emg_eeg_data(os.path.join(path,eeg_folder, eeg_file));
 
-" Apply Butter Bandpass Filter"
-emg_data = butter_bandpass_filter(emg_data, 8, 30, emg_fs, order=5)
-eeg_data = butter_bandpass_filter(eeg_data, 8, 30, emg_fs, order=5)
+# " Apply Butter Bandpass Filter"
+# emg_data = butter_bandpass_filter(emg_data, 8, 30, emg_fs, order=5)
+# eeg_data = butter_bandpass_filter(eeg_data, 8, 30, emg_fs, order=5)
 
-" Break into epochs"
+# " Break into epochs"
 
-emg_epochs = epoch(emg_data,emg_event_times, emg_fs, 1);
-eeg_epochs = epoch(eeg_data,eeg_event_times, eeg_fs, 1);
+# emg_epochs = epoch(emg_data,emg_event_times, emg_fs, 1);
+# eeg_epochs = epoch(eeg_data,eeg_event_times, eeg_fs, 1);
 
-" Plot epochs for visualization "
+# " Plot epochs for visualization "
 
-plot_epochs(emg_epochs, emg_fs, 1, 10) # First number is number of channels, Second number is number of epochs
-plot_epochs(eeg_epochs, eeg_fs, 1, 10) # First number is number of channels, Second number is number of epochs
+# plot_epochs(emg_epochs, emg_fs, 1, 10) # First number is number of channels, Second number is number of epochs
+# plot_epochs(eeg_epochs, eeg_fs, 1, 10) # First number is number of channels, Second number is number of epochs
 
-" Now let's see if we can plot the subset for a specified label"
-plot_epochs(emg_epochs[:,:,emg_grasp_labels == 1], emg_fs, 1, 10)
+# " Now let's see if we can plot the subset for a specified label"
+# plot_epochs(emg_epochs[:,:,emg_grasp_labels == 1], emg_fs, 1, 10)
